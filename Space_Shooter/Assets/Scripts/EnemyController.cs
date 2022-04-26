@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour, ShipController
 {
+   
+
+    public static event Base _PScoreUpdate;//yahan kuch scene lag raha
+
     public Space_Ship enemy = new Space_Ship();
     public GameObject nozel1;
     public GameObject explosion;
@@ -51,8 +55,9 @@ public class EnemyController : MonoBehaviour, ShipController
 
     public void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Player" || collision.tag == "PBullet")
+        if (/*collision.tag == "Player" ||*/ collision.tag == "PBullet")
         {
+            _PScoreUpdate();
             Debug.Log("here");
             PlayExplosion();
             Invoke ("Dead",0.5f);

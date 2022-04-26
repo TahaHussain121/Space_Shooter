@@ -5,12 +5,39 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour, ShipController
 {
 
-    public Space_Ship player = new Space_Ship();
-    public GameObject nozel1;
-    public GameObject nozel2;
-    public GameObject explosion;
+    public static event ValueUpdator _PLiveUpdate;
+    public static event Base _Dead;
 
 
+    [SerializeField]
+    private Space_Ship player = new Space_Ship();
+    [SerializeField]
+    private GameObject nozel1;
+    [SerializeField]
+    private GameObject nozel2;
+    [SerializeField]
+    private GameObject explosion;
+    [SerializeField]
+    private int lives=6;
+    [SerializeField]
+    private int score;
+    [SerializeField]
+    private const int maxLives=6;
+
+
+    public void OnEnable()
+    {
+        GameManager._ScoreUpdate += UpdateScore;
+        GameManager._LiveUpdate += UpdateLives;
+
+
+    }
+    public void OnDisable()
+    {
+
+        GameManager._ScoreUpdate -= UpdateScore;
+        GameManager._LiveUpdate -= UpdateLives;
+    }
     // Update is called once per frame
     void Update()
     {
@@ -25,8 +52,9 @@ public class PlayerController : MonoBehaviour, ShipController
     }
     public void Dead()
     {
+        _Dead();
         PlayExplosion();
-        //Destroy(this.gameObject);
+        Destroy(this.gameObject,0.5f);
     }
 
     public void Move(Vector2 dir)
@@ -49,6 +77,15 @@ public class PlayerController : MonoBehaviour, ShipController
 
 
 
+    }
+
+    private void UpdateScore(int _score)
+    {
+        score = _score;
+    }
+    private void UpdateLives(int _lives)
+    {
+        lives = _lives;
     }
 
     public void Shoot()
@@ -76,8 +113,21 @@ public class PlayerController : MonoBehaviour, ShipController
     {
         if (collision.tag == "Enemy" || collision.tag == "EBullet")
         {
-            Debug.Log("You are dead");
-            Dead();
+
+            Debug.Log("lives" + lives);
+            if (lives <= maxLives && lives != 0)
+            {
+                lives = lives - 1;
+                _PLiveUpdate(lives);
+
+            }
+            else if(lives == 0)
+            {
+                Debug.Log("Palyer are dead");
+
+                Dead();
+            }
+          
         }
     }
     public void PowerUp()

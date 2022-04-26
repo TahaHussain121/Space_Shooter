@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+
     [SerializeField]
     private int speed = 20;
     [SerializeField]
@@ -52,9 +53,10 @@ public class Bullet : MonoBehaviour
             if (collision.tag == "Enemy" || collision.tag == "EBullet")
             {
                 this.gameObject.SetActive(false);
+                
             }
         }
-        else if(Bullettype == ItemType.EBullet)
+        else if (Bullettype == ItemType.EBullet)
         {
             if (collision.tag == "Player" || collision.tag == "PBullet")
             {

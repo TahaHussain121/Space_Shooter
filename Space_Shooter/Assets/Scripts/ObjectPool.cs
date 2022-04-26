@@ -42,14 +42,14 @@ public class ObjectPool : MonoBehaviour
     }
     public static bool InitializePool()
     {
-       return Instance._InitializePool();
+        return Instance._InitializePool();
     }
 
 
     private GameObject _GetPooledObject(ItemType type)
     {
         Debug.Log("Item type" + type);
-        
+
         for (int i = 0; i < PoolsCollection[type].Count; i++)
         {
             if (!PoolsCollection[type][i].activeInHierarchy)
@@ -80,7 +80,7 @@ public class ObjectPool : MonoBehaviour
     private bool IsExpandable(ItemType type)
     {
 
-        PoolObject obj = ItemDetails( type);
+        PoolObject obj = ItemDetails(type);
 
         if (obj != null)
         {
@@ -98,4 +98,28 @@ public class ObjectPool : MonoBehaviour
 
         return obj;
     }
+    public static void _EndPool()
+    {
+        Debug.Log("Shutting pool");
+
+        Instance. EndPool();
+    }
+    private void EndPool()
+    {
+        foreach (PoolObject item in ObjectsToPool)
+        {
+            Debug.Log("pool items in list" + item.poolType);
+
+            for (int i = 0; i < item.poolSize; i++)
+            {
+
+                GameObject var = PoolsCollection[item.poolType][i];
+                Destroy(var);
+            }
+            PoolsCollection[item.poolType].Clear();
+        }
+    }
+
+
+
 }

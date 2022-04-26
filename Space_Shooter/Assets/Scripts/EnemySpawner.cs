@@ -25,10 +25,25 @@ public class EnemySpawner : MonoBehaviour
         Instance._InitializeEnemySpawn();
     }
 
-    public  void _InitializeEnemySpawn()
+    private  void _InitializeEnemySpawn()
     {
         Instance.Spawn();
         InvokeRepeating("IncreaseDifficulty", 5, 5.0f);
+    }
+
+    public static void EndEnemySpawn()
+    {
+
+        Debug.Log("Shutting spawner");
+
+        Instance._EndEnemySpawn();
+      
+    }
+    private void _EndEnemySpawn()
+    {
+        CancelInvoke("Spawn");
+        CancelInvoke("ScheduleSpawning");
+        CancelInvoke("IncreaseDifficulty");
     }
 
     private void Spawn()

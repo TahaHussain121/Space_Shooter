@@ -4,6 +4,10 @@ using UnityEngine;
 using System;
 public enum ShipType {Player,Enemy };
 public enum ItemType { PBullet, Enemy ,EBullet};
+public enum GameStates { Start, GamePlay, End };
+
+public delegate void ValueUpdator(int x);
+public delegate void Base();
 
 [System.Serializable]
 public class Space_Ship
@@ -12,8 +16,9 @@ public class Space_Ship
     private string name;
     [SerializeField]
     private int speed=5;
-    private float halfWidth=0.225f;//height/2/100
-    private float halfheight=0.285f;//height/2/100
+    private float halfWidth= 0.225f;//height/2/100
+    private float halfheight = 0.285f;//height/2/100
+   
     [SerializeField]
     private ShipType type;
 
