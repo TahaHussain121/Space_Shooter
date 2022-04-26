@@ -6,16 +6,18 @@ public class PlayerController : MonoBehaviour, ShipController
 {
 
     public Space_Ship player = new Space_Ship();
- 
-    // Start is called before the first frame update
-    void Start()
-    {
+    public GameObject nozel1;
+    public GameObject nozel2;
+    public GameObject explosion;
 
-    }
 
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Shoot();
+        }
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
         Vector2 dir = new Vector2(x, y).normalized;
@@ -23,7 +25,8 @@ public class PlayerController : MonoBehaviour, ShipController
     }
     public void Dead()
     {
-        throw new System.NotImplementedException();
+        PlayExplosion();
+        //Destroy(this.gameObject);
     }
 
     public void Move(Vector2 dir)
@@ -48,9 +51,44 @@ public class PlayerController : MonoBehaviour, ShipController
 
     }
 
+    public void Shoot()
+    {
+        GameObject bullet = ObjectPool.GetPooledObject(ItemType.PBullet);
+        if (bullet != null)
+        {
+            bullet.transform.position = nozel1.transform.position;
+            bullet.transform.rotation = nozel1.transform.rotation;
+            bullet.SetActive(true);
+            bullet.GetComponent<Bullet>().fire = true;
+        }
+        GameObject bullet2 = ObjectPool.GetPooledObject(ItemType.PBullet);
+        if (bullet2 != null)
+        {
+            bullet2.transform.position = nozel2.transform.position;
+            bullet2.transform.rotation = nozel2.transform.rotation;
+            bullet2.SetActive(true);
+            bullet2.GetComponent<Bullet>().fire = true;
+
+        }
+    }
+
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Enemy" || collision.tag == "EBullet")
+        {
+            Debug.Log("You are dead");
+            Dead();
+        }
+    }
     public void PowerUp()
     {
         throw new System.NotImplementedException();
     }
+    public void PlayExplosion()
+    {
+        GameObject ex = Instantiate(explosion, this.transform);
+        ex.GetComponent<Explosion>()._Destroy();
 
+
+    }
 }

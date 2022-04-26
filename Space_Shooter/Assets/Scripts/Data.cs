@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 public enum ShipType {Player,Enemy };
-public enum ItemType { PBullet, Enemy };
+public enum ItemType { PBullet, Enemy ,EBullet};
 
 [System.Serializable]
 public class Space_Ship
@@ -53,16 +53,13 @@ public class Space_Ship
 }
 public interface ShipController {
 
-    public abstract void Move(Vector2 dir);
+    public abstract void Move(Vector2 dir=new Vector2());
     public abstract void PowerUp();
     public abstract void Dead();
-
-
-
-
-
+    public abstract void Shoot();
 }
 
+[System.Serializable]
 public class PoolObject
 {
 

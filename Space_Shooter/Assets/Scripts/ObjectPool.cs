@@ -4,15 +4,32 @@ using UnityEngine;
 
 public class ObjectPool : MonoBehaviour
 {
-    // Start is called before the first frame update
+
+    private static ObjectPool Instance;
+
+    public void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(Instance);
+        }
+        else if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+    }
+
+
     public List<PoolObject> ObjectsToPool = new List<PoolObject>();
-   
+
     public Dictionary<ItemType, List<GameObject>> PoolsCollection = new Dictionary<ItemType, List<GameObject>>();
 
-    void Start()
+    private bool _InitializePool()
     {
         foreach (PoolObject item in ObjectsToPool)
         {
+            Debug.Log("pool items in list" + item.poolType);
             PoolsCollection.Add(item.poolType, new List<GameObject>());
             for (int i = 0; i < item.poolSize; i++)
             {
@@ -21,33 +38,64 @@ public class ObjectPool : MonoBehaviour
                 PoolsCollection[item.poolType].Add(obj);
             }
         }
-
+        return true;
+    }
+    public static bool InitializePool()
+    {
+       return Instance._InitializePool();
     }
 
-    public GameObject GetPooledObject(ItemType type)
+
+    private GameObject _GetPooledObject(ItemType type)
     {
-       
-            for (int i = 0; i < PoolsCollection[type].Count; i++)
+        Debug.Log("Item type" + type);
+        
+        for (int i = 0; i < PoolsCollection[type].Count; i++)
+        {
+            if (!PoolsCollection[type][i].activeInHierarchy)
             {
-                if (!PoolsCollection[type][i].activeInHierarchy)
-                {
-                    return PoolsCollection[type][i];
-                }
-            }//yahan sy agy check krna hai
-            foreach (ObjectPoolItem item in itemsToPool)
+                return PoolsCollection[type][i];
+            }
+        }//yahan sy agy check krna hai
+        foreach (ItemType item in PoolsCollection.Keys)
+        {
+            if (item == type)
             {
-                if (item.objectToPool.tag == tag)
+                if (IsExpandable(item))
                 {
-                    if (item.shouldExpand)
-                    {
-                        GameObject obj = (GameObject)Instantiate(item.objectToPool);
-                        obj.SetActive(false);
-                        pooledObjects.Add(obj);
-                        return obj;
-                    }
+                    GameObject obj = (GameObject)Instantiate(ItemDetails(item).Obj);
+                    obj.SetActive(false);
+                    PoolsCollection[item].Add(obj);
+                    return obj;
                 }
             }
-            return null;
         }
-    
+        return null;
+    }
+    public static GameObject GetPooledObject(ItemType type)
+    {
+        return Instance._GetPooledObject(type);
+    }
+
+    private bool IsExpandable(ItemType type)
+    {
+
+        PoolObject obj = ItemDetails( type);
+
+        if (obj != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    private PoolObject ItemDetails(ItemType type)
+    {
+
+        PoolObject obj = ObjectsToPool.Find(x => x.poolType == type && x.isExpandable == true);
+
+        return obj;
+    }
 }
